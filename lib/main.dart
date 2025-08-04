@@ -1,16 +1,25 @@
 import 'dart:async';
-
 import 'package:cookbook/my_app.dart';
+import 'package:cookbook/repositories/recipe_repository/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final talker = TalkerFlutter.init();
-  // регистрация в getIt
+  // регистрация talker в getIt
   GetIt.I.registerSingleton(talker);
+
+  const boxName = 'recipe_db';
+  // инициализация Hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(RecipeAdapter());
+  Hive.registerAdapter(IngredientAdapter());
+
+  final recipeBox = await Hive.openBox(boxName);
 
   // обработка ошибок интерфейса
   FlutterError.onError =

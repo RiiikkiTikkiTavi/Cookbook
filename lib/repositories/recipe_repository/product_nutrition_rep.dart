@@ -1,4 +1,4 @@
-import 'package:cookbook/repositories/products_nutrition/models/nutrition.dart';
+import 'package:cookbook/repositories/recipe_repository/models/nutrition.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 

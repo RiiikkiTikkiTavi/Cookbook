@@ -1,0 +1,13 @@
+1 Ingredient {
+  0 name;
+  1 quantity;
+  2 unit;
+}
+
+2 Recipe {
+  0  id;
+  1 title;
+  2 descr;
+  3 cookTime;
+  4 ingredient;
+}
