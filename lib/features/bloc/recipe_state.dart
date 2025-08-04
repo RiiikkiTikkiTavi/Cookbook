@@ -1,16 +1,34 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'recipe_bloc.dart';
 
 abstract class RecipeState extends Equatable {
   const RecipeState();
-
-  @override
-  List<Object> get props => [];
 }
 
-class RecipeInitial extends RecipeState {}
+class RecipeInitial extends RecipeState {
+  @override
+  List<Object?> get props => [];
+}
 
-class RecipeLoading extends RecipeState {}
+class RecipeLoading extends RecipeState {
+  @override
+  List<Object?> get props => [];
+}
 
-class RecipeLoaded extends RecipeState {}
+class RecipeLoaded extends RecipeState {
+  final List<Recipe> recipeList;
+  RecipeLoaded({
+    required this.recipeList,
+  });
 
-class RecipeLoadingFailure {}
+  @override
+  List<Object?> get props => [recipeList];
+}
+
+class RecipeLoadingFailure extends RecipeState {
+  final Object? exception;
+  RecipeLoadingFailure({this.exception});
+
+  @override
+  List<Object?> get props => [exception];
+}

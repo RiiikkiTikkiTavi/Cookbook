@@ -22,6 +22,11 @@ Future<void> main() async {
   final recipeBox = await Hive.openBox<Recipe>(boxName);
   GetIt.I.registerSingleton<Box<Recipe>>(recipeBox);
 
+  // регистрация LazySingleton по типу AbstractCoinsRepository с реализацией CryproCoinsRepository
+  GetIt.I.registerLazySingleton<AbstractRecipeSource>(
+    () => RecipeLocalSource(recipeBox),
+  );
+
   // обработка ошибок интерфейса
   FlutterError.onError =
       (details) => GetIt.I<Talker>().handle(details.exception, details.stack);
