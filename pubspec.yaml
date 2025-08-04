@@ -15,12 +15,22 @@ dependencies:
   flutter_svg: ^2.2.0
   dio: ^5.8.0+1
   image_picker: ^1.1.2 
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  talker_flutter: ^4.9.3
+  talker_dio_logger: ^4.9.3
+  talker_bloc_logger: ^4.9.3
+  hive_flutter: ^1.1.0
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+  json_serializable: ^6.9.0
+  hive_generator: ^2.0.1
+  build_runner:
 
 flutter:
 
