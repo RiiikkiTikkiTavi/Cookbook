@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:cookbook/my_app.dart';
-import 'package:cookbook/repositories/recipe_repository/models/models.dart';
+import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -19,7 +19,8 @@ Future<void> main() async {
   Hive.registerAdapter(RecipeAdapter());
   Hive.registerAdapter(IngredientAdapter());
 
-  final recipeBox = await Hive.openBox(boxName);
+  final recipeBox = await Hive.openBox<Recipe>(boxName);
+  GetIt.I.registerSingleton<Box<Recipe>>(recipeBox);
 
   // обработка ошибок интерфейса
   FlutterError.onError =
