@@ -25,6 +25,11 @@ class RecipeLoaded extends RecipeState {
   List<Object?> get props => [recipeList];
 }
 
+class RecipeOpened extends RecipeState {
+  @override
+  List<Object?> get props => [];
+}
+
 class RecipeLoadingFailure extends RecipeState {
   final Object? exception;
   RecipeLoadingFailure({this.exception});

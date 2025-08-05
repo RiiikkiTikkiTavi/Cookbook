@@ -8,14 +8,47 @@ part 'recipe_event.dart';
 part 'recipe_state.dart';
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
+  final recipeSource = GetIt.I<AbstractRecipeSource>();
   RecipeBloc() : super(RecipeInitial()) {
     on<LoadAllRecipes>((event, emit) async {
       await getAll(emit);
     });
-    on<AddRecipe>((event, emit) async {});
-    on<UpdateRecipe>((event, emit) async {});
-    on<DeleteRecipe>((event, emit) async {});
-    on<OpenRecipe>((event, emit) async {});
+    on<AddRecipe>((event, emit) async {
+      try {
+        await recipeSource.save(event.recipe);
+      } catch (e, st) {
+        emit(RecipeLoadingFailure(exception: e));
+        GetIt.I<Talker>().handle(e, st);
+      }
+      await getAll(emit);
+    });
+    on<UpdateRecipe>((event, emit) async {
+      try {
+        await recipeSource.save(event.recipe);
+      } catch (e, st) {
+        emit(RecipeLoadingFailure(exception: e));
+        GetIt.I<Talker>().handle(e, st);
+      }
+      await getAll(emit);
+    });
+    on<DeleteRecipe>((event, emit) async {
+      try {
+        await recipeSource.delete(event.id);
+      } catch (e, st) {
+        emit(RecipeLoadingFailure(exception: e));
+        GetIt.I<Talker>().handle(e, st);
+      }
+      await getAll(emit);
+    });
+    on<OpenRecipe>((event, emit) async {
+      try {
+        await recipeSource.getById(event.id);
+        emit(RecipeOpened());
+      } on Exception catch (e, st) {
+        emit(RecipeLoadingFailure(exception: e));
+        GetIt.I<Talker>().handle(e, st);
+      }
+    });
   }
 
   Future<void> getAll(Emitter<RecipeState> emit) async {
@@ -23,7 +56,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       if (state is! RecipeLoaded) {
         emit(RecipeLoading());
       }
-      final recipeList = await GetIt.I<AbstractRecipeSource>().getAll();
+      final recipeList = await recipeSource.getAll();
       emit(RecipeLoaded(recipeList: recipeList));
     } catch (e, st) {
       emit(RecipeLoadingFailure(exception: e));
