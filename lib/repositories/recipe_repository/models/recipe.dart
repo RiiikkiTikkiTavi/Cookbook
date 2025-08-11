@@ -16,7 +16,7 @@ class Recipe extends Equatable {
   @HiveField(3)
   final int? cookTime;
   @HiveField(4)
-  final Ingredient ingredient;
+  final List<Ingredient> ingredient;
   const Recipe({
     required this.id,
     required this.title,

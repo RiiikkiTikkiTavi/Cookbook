@@ -8,7 +8,7 @@ class Ingredient extends Equatable {
   @HiveField(0)
   final String name;
   @HiveField(1)
-  final int quantity;
+  final double quantity;
   @HiveField(2)
   final String unit;
   const Ingredient({
@@ -17,7 +17,7 @@ class Ingredient extends Equatable {
     required this.unit,
   });
 
-  Ingredient copyWith({String? name, int? quantity, String? unit}) {
+  Ingredient copyWith({String? name, double? quantity, String? unit}) {
     return Ingredient(
       name: name ?? this.name,
       quantity: quantity ?? this.quantity,

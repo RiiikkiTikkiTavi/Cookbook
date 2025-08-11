@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:cookbook/features/bloc/recipe_bloc.dart';
 import 'package:cookbook/features/recipelist/widgets/widgets.dart';
 import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -66,18 +66,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               }
             }
             if (state is RecipeLoadingFailure) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Something went wrong',
-                      style: theme.textTheme.headlineMedium,
-                    )
-                  ],
-                ),
-              );
+              return const ErrorWidget();
             }
             return const Center(
               child: CircularProgressIndicator(),
