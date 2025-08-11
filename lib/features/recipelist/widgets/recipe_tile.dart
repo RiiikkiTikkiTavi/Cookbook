@@ -1,3 +1,4 @@
+import 'package:cookbook/repositories/recipe_repository/models/models.dart';
 import 'package:cookbook/resources/resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,17 +6,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 class RecipeTile extends StatelessWidget {
   const RecipeTile({
     super.key,
-    required this.recipeName,
+    required this.recipe,
   });
 
-  final String recipeName;
+  final Recipe recipe;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ListTile(
       title: Text(
-        recipeName,
+        recipe.title,
         style: theme.textTheme.bodyMedium,
       ),
       subtitle: Text(
@@ -28,10 +29,7 @@ class RecipeTile extends StatelessWidget {
         width: 25,
       ),
       onTap: () {
-        Navigator.of(context).pushNamed(
-          '/recipe',
-          arguments: recipeName,
-        );
+        Navigator.of(context).pushNamed('/recipe', arguments: recipe.title);
       },
     );
   }

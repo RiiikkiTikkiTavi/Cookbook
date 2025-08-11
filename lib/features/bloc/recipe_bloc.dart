@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -8,8 +10,7 @@ part 'recipe_event.dart';
 part 'recipe_state.dart';
 
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
-  final recipeSource = GetIt.I<AbstractRecipeSource>();
-  RecipeBloc() : super(RecipeInitial()) {
+  RecipeBloc(this.recipeSource) : super(RecipeInitial()) {
     on<LoadAllRecipes>((event, emit) async {
       await getAll(emit);
     });
@@ -50,6 +51,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       }
     });
   }
+  //final recipeSource = GetIt.I<AbstractRecipeSource>();
+  final AbstractRecipeSource recipeSource;
 
   Future<void> getAll(Emitter<RecipeState> emit) async {
     try {
