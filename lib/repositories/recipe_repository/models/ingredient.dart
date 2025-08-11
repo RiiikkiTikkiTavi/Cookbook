@@ -17,6 +17,14 @@ class Ingredient extends Equatable {
     required this.unit,
   });
 
+  Ingredient copyWith({String? name, int? quantity, String? unit}) {
+    return Ingredient(
+      name: name ?? this.name,
+      quantity: quantity ?? this.quantity,
+      unit: unit ?? this.unit,
+    );
+  }
+
   @override
   List<Object?> get props => [name, quantity, unit];
 }

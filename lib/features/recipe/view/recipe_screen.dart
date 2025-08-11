@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cookbook/features/recipe/widgets/widgets.dart';
+import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
 import 'package:cookbook/resources/resources.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,11 +13,13 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeScreenState extends State<RecipeScreen> {
-  String? recipeName;
+  Recipe? recipe;
   File? imageFile;
   final ImagePicker picker = ImagePicker();
 
-  List<IngredientRow> ingredientRows = [];
+  List<Ingredient> ingredients = [
+    const Ingredient(name: '', quantity: 0, unit: '')
+  ];
 
   Future<void> selectImage() async {
     final XFile? pickedFile =
@@ -29,27 +33,36 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
   void addIngredient() {
     setState(() {
-      ingredientRows.add(const IngredientRow());
+      ingredients.add(const Ingredient(name: '', quantity: 0, unit: ''));
     });
   }
 
-// оюеспечивает передачу параметров с recipe_list_screen
-/*
-  @override
-  void didChangeDependencies() {
-    final args = ModalRoute.of(context)?.settings.arguments;
-    assert(args != null && args is String, 'You must provide String args');
-    recipeName = args as String;
-    setState(() {});
-    super.didChangeDependencies();
-  }*/
+  void updateIngredientName(int index, String name) {
+    setState(() {
+      ingredients[index] = ingredients[index].copyWith(name: name);
+    });
+  }
+
+  void updateIngredientQuant(int index, int quantity) {
+    setState(() {
+      ingredients[index] = ingredients[index].copyWith(quantity: quantity);
+    });
+  }
+
+  void updateIngredientUnit(int index, String unit) {
+    setState(() {
+      ingredients[index] = ingredients[index].copyWith(unit: unit);
+    });
+  }
+
+  void saveRecipe() {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           //title: Text(recipeName ?? '...'),
-          title: const Text("Recipe"),
+          title: const Text("Создание рецепта"),
         ),
         body: ListView(
           padding: const EdgeInsets.all(8),
@@ -70,6 +83,17 @@ class _RecipeScreenState extends State<RecipeScreen> {
                         ),
                 )),
             const SizedBox(height: 24),
+            const Text(
+              'Название',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            const TextField(
+              decoration: InputDecoration(
+                hintText: 'Введите название рецепта...',
+                border: OutlineInputBorder(),
+              ),
+            ),
             Row(
               children: [
                 const Text(
@@ -88,7 +112,21 @@ class _RecipeScreenState extends State<RecipeScreen> {
             ),
             const SizedBox(height: 16),
             Column(children: [
-              ...ingredientRows,
+              ...ingredients.asMap().entries.map((entry) {
+                final index = entry.key;
+                final ingredient = entry.value;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: IngredientRow(
+                    name: ingredient.name,
+                    quantity: ingredient.quantity,
+                    unit: ingredient.unit,
+                    onNameChanged: (val) => updateIngredientName(index, val),
+                    onQuantChanged: (val) => updateIngredientQuant(index, val),
+                    onUnitChanged: (val) => updateIngredientUnit(index, val),
+                  ),
+                );
+              }),
             ]),
             const SizedBox(height: 24),
             const Text(
@@ -103,39 +141,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: saveRecipe,
+              child: const Text('Сохранить'),
+            ),
           ],
         ));
-  }
-}
-
-class IngredientRow extends StatelessWidget {
-  const IngredientRow({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: TextFormField(
-              decoration: const InputDecoration(
-            hintText: 'введите ингредиент',
-            labelText: 'Ингредиент',
-          )),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: TextFormField(
-            decoration: const InputDecoration(
-              hintText: 'введите количество',
-              labelText: 'Количество',
-            ),
-            keyboardType: TextInputType.number,
-          ),
-        ),
-      ],
-    );
   }
 }

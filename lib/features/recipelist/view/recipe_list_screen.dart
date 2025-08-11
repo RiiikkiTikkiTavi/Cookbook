@@ -88,6 +88,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
+          Navigator.of(context).pushNamed('/recipe');
           //ProductNutritionRepository().getNutrition(['1 egg', '100ml milk']);
         },
       ),
