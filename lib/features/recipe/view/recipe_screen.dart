@@ -17,9 +17,43 @@ class _RecipeScreenState extends State<RecipeScreen> {
   File? imageFile;
   final ImagePicker picker = ImagePicker();
 
-  List<Ingredient> ingredients = [
-    const Ingredient(name: '', quantity: 0, unit: '')
-  ];
+  // контроллер для текстового поля - название
+  final _titleController = TextEditingController();
+  // контроллер для текстового поля - описание
+  final _descrController = TextEditingController();
+  // список контроллеров для ингредиентов
+  final List<IngredientControllers> _ingrControllers = [];
+
+// при инициализации страницы сразу добавляется первый контроллер
+// для первой строки ингредиентов
+  @override
+  void initState() {
+    addIngrController();
+    super.initState();
+  }
+
+// метод добавления новых контроллеров ингредиентов
+  void addIngrController() {
+    setState(() {
+      _ingrControllers.add(
+        IngredientControllers(
+          nameController: TextEditingController(),
+          quantityController: TextEditingController(),
+          unitController: TextEditingController(),
+        ),
+      );
+    });
+  }
+
+// освобождение памяти, удаление ненужных контроллеров
+  void removeIngrController(int index) {
+    setState(() {
+      _ingrControllers[index].nameController.dispose();
+      _ingrControllers[index].quantityController.dispose();
+      _ingrControllers[index].unitController.dispose();
+      _ingrControllers.removeAt(index);
+    });
+  }
 
   Future<void> selectImage() async {
     final XFile? pickedFile =
@@ -29,30 +63,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
         imageFile = File(pickedFile.path);
       });
     }
-  }
-
-  void addIngredient() {
-    setState(() {
-      ingredients.add(const Ingredient(name: '', quantity: 0, unit: ''));
-    });
-  }
-
-  void updateIngredientName(int index, String name) {
-    setState(() {
-      ingredients[index] = ingredients[index].copyWith(name: name);
-    });
-  }
-
-  void updateIngredientQuant(int index, int quantity) {
-    setState(() {
-      ingredients[index] = ingredients[index].copyWith(quantity: quantity);
-    });
-  }
-
-  void updateIngredientUnit(int index, String unit) {
-    setState(() {
-      ingredients[index] = ingredients[index].copyWith(unit: unit);
-    });
   }
 
   void saveRecipe() {}
@@ -88,8 +98,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(
                 hintText: 'Введите название рецепта...',
                 border: OutlineInputBorder(),
               ),
@@ -101,42 +112,47 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  iconSize: 18,
+                  iconSize: 20,
                   icon: const Icon(Icons.add),
                   onPressed: () {
-                    addIngredient();
-                    // ...
+                    // метод добавления нового ингредиента
+                    addIngrController();
                   },
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            Column(children: [
-              ...ingredients.asMap().entries.map((entry) {
-                final index = entry.key;
-                final ingredient = entry.value;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: IngredientRow(
-                    name: ingredient.name,
-                    quantity: ingredient.quantity,
-                    unit: ingredient.unit,
-                    onNameChanged: (val) => updateIngredientName(index, val),
-                    onQuantChanged: (val) => updateIngredientQuant(index, val),
-                    onUnitChanged: (val) => updateIngredientUnit(index, val),
-                  ),
-                );
-              }),
-            ]),
+            Column(
+              children: [
+                //..._ingrControllers перечисление всех ингредиентов
+                // asMap() преобразованных в мапу
+                // entries в виде пары ключ (номер п/п) - значение
+                // map((entry) для каждого значения выполняем следующее
+                ..._ingrControllers.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final contollers = entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    // виджет строки ингредиента
+                    child: IngredientRow(
+                      nameController: contollers.nameController,
+                      quantityController: contollers.quantityController,
+                      unitController: contollers.unitController,
+                    ),
+                  );
+                }),
+              ],
+            ),
             const SizedBox(height: 24),
             const Text(
               'Описание',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            const TextField(
+            TextField(
+              controller: _descrController,
               maxLines: 8,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Введите описание рецепта...',
                 border: OutlineInputBorder(),
               ),
@@ -149,4 +165,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
           ],
         ));
   }
+}
+
+class IngredientControllers {
+  final TextEditingController nameController;
+  final TextEditingController quantityController;
+  final TextEditingController unitController;
+
+  IngredientControllers({
+    required this.nameController,
+    required this.quantityController,
+    required this.unitController,
+  });
 }
