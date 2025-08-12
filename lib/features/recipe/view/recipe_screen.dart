@@ -69,7 +69,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
   }
 
   void saveRecipe() {
-    final id = DateTime.now().millisecondsSinceEpoch;
     final title = _titleController.text.trim();
     final description = _descrController.text.trim();
 
@@ -83,7 +82,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
     }
 
     Recipe recipe = Recipe(
-        id: id, title: title, descr: description, ingredient: ingredients);
+        id: '', title: title, descr: description, ingredient: ingredients);
 
     _recipeBloc.add(AddRecipe(recipe: recipe));
   }
@@ -95,100 +94,115 @@ class _RecipeScreenState extends State<RecipeScreen> {
         //title: Text(recipeName ?? '...'),
         title: const Text("Создание рецепта"),
       ),
-      body: BlocBuilder<RecipeBloc, RecipeState>(
+      body: BlocListener<RecipeBloc, RecipeState>(
         bloc: _recipeBloc,
-        builder: (context, state) {
-          return ListView(
-            padding: const EdgeInsets.all(8),
-            children: [
-              GestureDetector(
-                  onTap: selectImage,
-                  child: SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: imageFile != null
-                        ? Image.file(
-                            imageFile!,
-                            fit: BoxFit.cover,
-                          )
-                        : const Image(
-                            image: AssetImage(AppImages.placeholder),
-                            fit: BoxFit.cover,
-                          ),
-                  )),
-              const SizedBox(height: 24),
-              const Text(
-                'Название',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  hintText: 'Введите название рецепта...',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              Row(
-                children: [
-                  const Text(
-                    'Ингредиенты',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
-                    iconSize: 20,
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      // метод добавления нового ингредиента
-                      addIngrController();
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Column(
-                children: [
-                  //..._ingrControllers перечисление всех ингредиентов
-                  // asMap() преобразованных в мапу
-                  // entries в виде пары ключ (номер п/п) - значение
-                  // map((entry) для каждого значения выполняем следующее
-                  ..._ingrControllers.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final contollers = entry.value;
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      // виджет строки ингредиента
-                      child: IngredientRow(
-                        nameController: contollers.nameController,
-                        quantityController: contollers.quantityController,
-                        unitController: contollers.unitController,
-                      ),
-                    );
-                  }),
-                ],
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'Описание',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _descrController,
-                maxLines: 8,
-                decoration: const InputDecoration(
-                  hintText: 'Введите описание рецепта...',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: saveRecipe,
-                child: const Text('Сохранить'),
-              ),
-            ],
-          );
+        listener: (context, state) {
+          if (state is RecipeLoaded) {
+            // возвращаемся назад на главный экран
+            Navigator.of(context).pop();
+          } else if (state is RecipeLoadingFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text('Ошибка при сохранении: ${state.exception}')),
+            );
+          }
         },
+        child: BlocBuilder<RecipeBloc, RecipeState>(
+          bloc: _recipeBloc,
+          builder: (context, state) {
+            return ListView(
+              padding: const EdgeInsets.all(8),
+              children: [
+                GestureDetector(
+                    onTap: selectImage,
+                    child: SizedBox(
+                      width: 300,
+                      height: 300,
+                      child: imageFile != null
+                          ? Image.file(
+                              imageFile!,
+                              fit: BoxFit.cover,
+                            )
+                          : const Image(
+                              image: AssetImage(AppImages.placeholder),
+                              fit: BoxFit.cover,
+                            ),
+                    )),
+                const SizedBox(height: 24),
+                const Text(
+                  'Название',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    hintText: 'Введите название рецепта...',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      'Ингредиенты',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    IconButton(
+                      iconSize: 20,
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        // метод добавления нового ингредиента
+                        addIngrController();
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Column(
+                  children: [
+                    //..._ingrControllers перечисление всех ингредиентов
+                    // asMap() преобразованных в мапу
+                    // entries в виде пары ключ (номер п/п) - значение
+                    // map((entry) для каждого значения выполняем следующее
+                    ..._ingrControllers.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final contollers = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        // виджет строки ингредиента
+                        child: IngredientRow(
+                          nameController: contollers.nameController,
+                          quantityController: contollers.quantityController,
+                          unitController: contollers.unitController,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Описание',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _descrController,
+                  maxLines: 8,
+                  decoration: const InputDecoration(
+                    hintText: 'Введите описание рецепта...',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: saveRecipe,
+                  child: const Text('Сохранить'),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

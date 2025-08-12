@@ -8,7 +8,7 @@ part 'recipe.g.dart';
 @HiveType(typeId: 2)
 class Recipe extends Equatable {
   @HiveField(0)
-  final int id;
+  final String id;
   @HiveField(1)
   final String title;
   @HiveField(2)
@@ -24,6 +24,22 @@ class Recipe extends Equatable {
     this.cookTime,
     required this.ingredient,
   });
+
+  Recipe copyWith({
+    String? id,
+    String? title,
+    String? descr,
+    int? cookTime,
+    List<Ingredient>? ingredient,
+  }) {
+    return Recipe(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      descr: descr ?? this.descr,
+      cookTime: cookTime ?? this.cookTime,
+      ingredient: ingredient ?? this.ingredient,
+    );
+  }
 
   @override
   List<Object?> get props => [id, title, descr, cookTime, ingredient];

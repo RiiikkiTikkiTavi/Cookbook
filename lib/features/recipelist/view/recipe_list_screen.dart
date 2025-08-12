@@ -20,7 +20,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
 
   @override
   void initState() {
-    _recipeBloc.add(LoadAllRecipes());
+    _recipeBloc.add(const LoadAllRecipes());
     super.initState();
   }
 

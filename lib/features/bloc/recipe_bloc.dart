@@ -5,6 +5,7 @@ import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:talker_flutter/talker_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 part 'recipe_event.dart';
 part 'recipe_state.dart';
@@ -15,8 +16,10 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       await getAll(emit);
     });
     on<AddRecipe>((event, emit) async {
+      final newId = const Uuid().v4();
       try {
-        await recipeSource.save(event.recipe);
+        final recipeWithId = event.recipe.copyWith(id: newId);
+        await recipeSource.save(recipeWithId);
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);

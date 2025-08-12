@@ -9,35 +9,35 @@ abstract class RecipeEvent extends Equatable {
 
 class AddRecipe extends RecipeEvent {
   final Recipe recipe;
-  AddRecipe({
+  const AddRecipe({
     required this.recipe,
   });
 }
 
 class UpdateRecipe extends RecipeEvent {
   final Recipe recipe;
-  UpdateRecipe({
+  const UpdateRecipe({
     required this.recipe,
   });
 }
 
 class DeleteRecipe extends RecipeEvent {
   final int id;
-  DeleteRecipe({
+  const DeleteRecipe({
     required this.id,
   });
 }
 
 class OpenRecipe extends RecipeEvent {
   final int id;
-  OpenRecipe({
+  const OpenRecipe({
     required this.id,
   });
 }
 
 class LoadAllRecipes extends RecipeEvent {
   final Completer? completer;
-  LoadAllRecipes({
+  const LoadAllRecipes({
     this.completer,
   });
   @override

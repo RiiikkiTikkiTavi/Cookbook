@@ -16,7 +16,8 @@ class ErrorWidget extends StatelessWidget {
           Text(
             'Something went wrong',
             style: theme.textTheme.headlineMedium,
-          )
+          ),
+          //Text('Ошибка: ${state.exception}'),
         ],
       ),
     );
