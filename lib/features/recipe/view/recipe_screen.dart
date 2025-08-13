@@ -35,6 +35,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descrController.dispose();
+    for (var ingr in _ingrControllers) {
+      ingr.dispose();
+    }
+    super.dispose();
+  }
+
 // метод добавления новых контроллеров ингредиентов
   void addIngrController() {
     setState(() {
@@ -51,14 +61,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
 // освобождение памяти, удаление ненужных контроллеров
   void removeIngrController(int index) {
     setState(() {
-      _ingrControllers[index].nameController.dispose();
-      _ingrControllers[index].quantityController.dispose();
-      _ingrControllers[index].unitController.dispose();
+      _ingrControllers[index].dispose();
       _ingrControllers.removeAt(index);
     });
   }
 
-  Future<void> selectImage() async {
+  Future<void> _selectImage() async {
     final XFile? pickedFile =
         await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -113,41 +121,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
             return ListView(
               padding: const EdgeInsets.all(8),
               children: [
-                GestureDetector(
-                    onTap: selectImage,
-                    child: SizedBox(
-                      width: 300,
-                      height: 300,
-                      child: imageFile != null
-                          ? Image.file(
-                              imageFile!,
-                              fit: BoxFit.cover,
-                            )
-                          : const Image(
-                              image: AssetImage(AppImages.placeholder),
-                              fit: BoxFit.cover,
-                            ),
-                    )),
+                _builtImagePicker(),
                 const SizedBox(height: 24),
-                const Text(
-                  'Название',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                _builtSectionTitle('Название'),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(
-                    hintText: 'Введите название рецепта...',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextField(
+                    controller: _titleController,
+                    hint: 'Введите название рецепта...'),
                 Row(
                   children: [
-                    const Text(
-                      'Ингредиенты',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+                    _builtSectionTitle('Ингредиенты'),
                     IconButton(
                       iconSize: 20,
                       icon: const Icon(Icons.add),
@@ -181,19 +164,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text(
-                  'Описание',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                _builtSectionTitle('Описание'),
                 const SizedBox(height: 16),
-                TextField(
-                  controller: _descrController,
-                  maxLines: 8,
-                  decoration: const InputDecoration(
-                    hintText: 'Введите описание рецепта...',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
+                _buildTextField(
+                    controller: _descrController,
+                    hint: 'Введите описание рецепта...',
+                    maxLines: 8),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: saveRecipe,
@@ -206,8 +182,47 @@ class _RecipeScreenState extends State<RecipeScreen> {
       ),
     );
   }
+
+  Widget _builtImagePicker() {
+    return GestureDetector(
+      onTap: _selectImage,
+      child: SizedBox(
+        width: 300,
+        height: 300,
+        child: imageFile != null
+            ? Image.file(imageFile!, fit: BoxFit.cover)
+            : const Image(
+                image: AssetImage(AppImages.placeholder),
+                fit: BoxFit.cover,
+              ),
+      ),
+    );
+  }
+
+  Widget _builtSectionTitle(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    int maxLines = 1,
+  }) {
+    return TextField(
+      controller: controller,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        hintText: hint,
+        border: const OutlineInputBorder(),
+      ),
+    );
+  }
 }
 
+// обертка для контроллеров одного ингредиента
 class IngredientControllers {
   final TextEditingController nameController;
   final TextEditingController quantityController;
@@ -218,4 +233,10 @@ class IngredientControllers {
     required this.quantityController,
     required this.unitController,
   });
+
+  void dispose() {
+    nameController.dispose();
+    quantityController.dispose();
+    unitController.dispose();
+  }
 }

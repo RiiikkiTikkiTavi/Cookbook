@@ -46,8 +46,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     });
     on<OpenRecipe>((event, emit) async {
       try {
-        await recipeSource.getById(event.id);
-        emit(RecipeOpened());
+        final recipe = await recipeSource.getById(event.id);
+        emit(RecipeOpened(recipe!));
       } on Exception catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
