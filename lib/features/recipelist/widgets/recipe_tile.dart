@@ -29,7 +29,13 @@ class RecipeTile extends StatelessWidget {
         width: 25,
       ),
       onTap: () {
-        Navigator.of(context).pushNamed('/recipe', arguments: recipe.id);
+        Navigator.of(context).pushNamed(
+          '/recipe',
+          arguments: {
+            'id': recipe.id,
+            'isReadOnly': true,
+          },
+        );
       },
     );
   }

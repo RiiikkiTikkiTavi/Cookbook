@@ -41,7 +41,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         child: BlocBuilder<RecipeBloc, RecipeState>(
           bloc: _recipeBloc,
           builder: (context, state) {
-            if (state is RecipeLoaded) {
+            if (state is RecipeListLoaded) {
               if (state.recipeList.isEmpty) {
                 return Center(
                   child: Column(

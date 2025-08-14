@@ -22,14 +22,14 @@ class UpdateRecipe extends RecipeEvent {
 }
 
 class DeleteRecipe extends RecipeEvent {
-  final int id;
+  final String id;
   const DeleteRecipe({
     required this.id,
   });
 }
 
 class OpenRecipe extends RecipeEvent {
-  final int id;
+  final String id;
   const OpenRecipe({
     required this.id,
   });

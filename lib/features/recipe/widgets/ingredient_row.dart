@@ -4,12 +4,14 @@ class IngredientRow extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController quantityController;
   final TextEditingController unitController;
+  final bool isReadOnly;
 
   const IngredientRow(
       {super.key,
       required this.nameController,
       required this.quantityController,
-      required this.unitController});
+      required this.unitController,
+      this.isReadOnly = false});
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +21,48 @@ class IngredientRow extends StatelessWidget {
           flex: 2,
           child: TextFormField(
               controller: nameController,
-              decoration: const InputDecoration(
+              readOnly: isReadOnly,
+              decoration: InputDecoration(
                 hintText: 'введите ингредиент',
                 labelText: 'Ингредиент',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.grey), // рамка в обычном состоянии
+                ),
+                focusedBorder: isReadOnly
+                    ? const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.grey), // цвет в режиме чтения
+                      )
+                    : const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Colors.green), //цвет в режиме редактирования
+                      ),
               )),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: TextFormField(
             controller: quantityController,
-            decoration: const InputDecoration(
+            readOnly: isReadOnly,
+            decoration: InputDecoration(
               hintText: 'введите количество',
               labelText: 'Количество',
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              enabledBorder: const OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.grey), // рамка в обычном состоянии
+              ),
+              focusedBorder: isReadOnly
+                  ? const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.grey), // цвет в режиме чтения
+                    )
+                  : const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.green), //цвет в режиме редактирования
+                    ),
             ),
             keyboardType: TextInputType.number,
           ),
@@ -40,12 +70,27 @@ class IngredientRow extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: TextFormField(
-              controller: unitController,
-              decoration: const InputDecoration(
-                hintText: 'введите ед.изм.',
-                labelText: 'Единица изменрения',
-                border: OutlineInputBorder(),
-              )),
+            controller: unitController,
+            readOnly: isReadOnly,
+            decoration: InputDecoration(
+              hintText: 'введите ед.изм.',
+              labelText: 'Единица изменрения',
+              border: const OutlineInputBorder(),
+              enabledBorder: const OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: Colors.grey), // рамка в обычном состоянии
+              ),
+              focusedBorder: isReadOnly
+                  ? const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.grey), // цвет в режиме чтения
+                    )
+                  : const OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color: Colors.green), //цвет в режиме редактирования
+                    ),
+            ),
+          ),
         ),
       ],
     );

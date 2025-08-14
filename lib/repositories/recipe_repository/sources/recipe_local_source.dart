@@ -3,9 +3,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 abstract class AbstractRecipeSource {
   Future<List<Recipe>> getAll();
-  Future<Recipe?> getById(int id);
+  Future<Recipe?> getById(String id);
   Future<void> save(Recipe recipe);
-  Future<void> delete(int id);
+  Future<void> delete(String id);
 }
 
 class RecipeLocalSource implements AbstractRecipeSource {
@@ -14,7 +14,7 @@ class RecipeLocalSource implements AbstractRecipeSource {
   RecipeLocalSource(this.recipeBox);
 
   @override
-  Future<void> delete(int id) async {
+  Future<void> delete(String id) async {
     await recipeBox.delete(id);
   }
 
@@ -24,7 +24,7 @@ class RecipeLocalSource implements AbstractRecipeSource {
   }
 
   @override
-  Future<Recipe?> getById(int id) async {
+  Future<Recipe?> getById(String id) async {
     return recipeBox.get(id);
   }
 

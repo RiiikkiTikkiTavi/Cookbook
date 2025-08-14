@@ -20,6 +20,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       try {
         final recipeWithId = event.recipe.copyWith(id: newId);
         await recipeSource.save(recipeWithId);
+        emit(RecipeSaved());
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -29,6 +30,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<UpdateRecipe>((event, emit) async {
       try {
         await recipeSource.save(event.recipe);
+        emit(RecipeSaved());
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -47,7 +49,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<OpenRecipe>((event, emit) async {
       try {
         final recipe = await recipeSource.getById(event.id);
-        emit(RecipeOpened(recipe!));
+        emit(RecipeLoaded(recipe!));
       } on Exception catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -59,11 +61,11 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
 
   Future<void> getAll(Emitter<RecipeState> emit) async {
     try {
-      if (state is! RecipeLoaded) {
+      if (state is! RecipeListLoaded) {
         emit(RecipeLoading());
       }
       final recipeList = await recipeSource.getAll();
-      emit(RecipeLoaded(recipeList: recipeList));
+      emit(RecipeListLoaded(recipeList: recipeList));
     } catch (e, st) {
       emit(RecipeLoadingFailure(exception: e));
       GetIt.I<Talker>().handle(e, st); // использование talker для вывода ошибки
