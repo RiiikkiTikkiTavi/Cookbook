@@ -21,6 +21,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   final _recipeBloc = RecipeBloc(GetIt.I<AbstractRecipeSource>());
   File? imageFile;
   final ImagePicker picker = ImagePicker();
+  late bool isReadOnly;
 
   // контроллер для текстового поля - название
   final _titleController = TextEditingController();
@@ -34,6 +35,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   @override
   void initState() {
     super.initState();
+    isReadOnly = widget.isReadOnly;
     if (widget.recipeId != null) {
       _recipeBloc.add(OpenRecipe(id: widget.recipeId!));
     } else {
@@ -108,15 +110,48 @@ class _RecipeScreenState extends State<RecipeScreen> {
     }
   }
 
+  void deleteRecipe() {
+    _recipeBloc.add(DeleteRecipe(id: widget.recipeId!));
+  }
+
+  void switchEditMode() {
+    setState(() {
+      isReadOnly = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipeId == null
             ? 'Создание рецепта'
-            : widget.isReadOnly
+            : isReadOnly
                 ? 'Просмотр рецепта'
                 : 'Редактирование рецепта'),
+        actions: [
+          if (widget.recipeId != null)
+            PopupMenuButton<RecipeMenuOptions>(
+                onSelected: (option) {
+                  switch (option) {
+                    case RecipeMenuOptions.edit:
+                      switchEditMode();
+                      break;
+                    case RecipeMenuOptions.delete:
+                      deleteRecipe();
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: RecipeMenuOptions.edit,
+                        child: Text('Изменить'),
+                      ),
+                      const PopupMenuItem(
+                          value: RecipeMenuOptions.delete,
+                          child: Text('Удалить')),
+                    ])
+        ],
       ),
       body: BlocListener<RecipeBloc, RecipeState>(
         bloc: _recipeBloc,
@@ -124,7 +159,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
           // если загружен существующий рецепт
           if (state is RecipeLoaded && widget.recipeId != null) {
             _fillFields(state.recipe);
-          } else if (state is RecipeSaved) {
+          } else if (state is RecipeActionSuccess) {
             // если рецепт сохранен
             // возвращаемся назад на главный экран
             Navigator.of(context).pop();
@@ -154,7 +189,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                 _buildTextField(
                     controller: _titleController,
                     hint: 'Введите название рецепта...',
-                    readOnly: widget.isReadOnly),
+                    readOnly: isReadOnly),
                 Row(
                   children: [
                     _builtSectionTitle('Ингредиенты'),
@@ -185,7 +220,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                           nameController: contollers.nameController,
                           quantityController: contollers.quantityController,
                           unitController: contollers.unitController,
-                          isReadOnly: widget.isReadOnly,
+                          isReadOnly: isReadOnly,
                         ),
                       );
                     }),
@@ -198,9 +233,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     controller: _descrController,
                     hint: 'Введите описание рецепта...',
                     maxLines: 8,
-                    readOnly: widget.isReadOnly),
+                    readOnly: isReadOnly),
                 const SizedBox(height: 16),
-                if (!widget.isReadOnly)
+                if (!isReadOnly)
                   ElevatedButton(
                     onPressed: saveRecipe,
                     child: const Text('Сохранить'),
@@ -258,14 +293,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
       decoration: InputDecoration(
         hintText: hint,
         border: const OutlineInputBorder(),
-        enabledBorder: const OutlineInputBorder(
-          borderSide:
-              BorderSide(color: Colors.grey), // рамка в обычном состоянии
+        enabledBorder: OutlineInputBorder(
+          borderSide: readOnly
+              ? const BorderSide(color: Colors.black26)
+              : const BorderSide(
+                  color: Colors.black54), // рамка в обычном состоянии
         ),
         focusedBorder: readOnly
             ? const OutlineInputBorder(
                 borderSide:
-                    BorderSide(color: Colors.grey), // цвет в режиме чтения
+                    BorderSide(color: Colors.black26), // цвет в режиме чтения
               )
             : const OutlineInputBorder(
                 borderSide: BorderSide(
@@ -274,6 +311,11 @@ class _RecipeScreenState extends State<RecipeScreen> {
       ),
     );
   }
+}
+
+enum RecipeMenuOptions {
+  edit,
+  delete,
 }
 
 // обертка для контроллеров одного ингредиента

@@ -33,7 +33,7 @@ class RecipeLoaded extends RecipeState {
   List<Object?> get props => [recipe];
 }
 
-class RecipeSaved extends RecipeState {
+class RecipeActionSuccess extends RecipeState {
   @override
   List<Object?> get props => [];
 }

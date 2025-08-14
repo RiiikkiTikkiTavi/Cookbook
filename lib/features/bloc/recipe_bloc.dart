@@ -20,7 +20,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       try {
         final recipeWithId = event.recipe.copyWith(id: newId);
         await recipeSource.save(recipeWithId);
-        emit(RecipeSaved());
+        emit(RecipeActionSuccess());
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -30,7 +30,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<UpdateRecipe>((event, emit) async {
       try {
         await recipeSource.save(event.recipe);
-        emit(RecipeSaved());
+        emit(RecipeActionSuccess());
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -40,6 +40,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     on<DeleteRecipe>((event, emit) async {
       try {
         await recipeSource.delete(event.id);
+        emit(RecipeActionSuccess());
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);

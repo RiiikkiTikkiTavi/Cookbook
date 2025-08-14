@@ -26,14 +26,16 @@ class IngredientRow extends StatelessWidget {
                 hintText: 'введите ингредиент',
                 labelText: 'Ингредиент',
                 border: const OutlineInputBorder(),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(
-                      color: Colors.grey), // рамка в обычном состоянии
-                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: isReadOnly
+                      ? const BorderSide(color: Colors.black26)
+                      : const BorderSide(
+                          color: Colors.black54), // рамка в обычном состоянии
+                ), // рамка в обычном состоянии
                 focusedBorder: isReadOnly
                     ? const OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Colors.grey), // цвет в режиме чтения
+                            color: Colors.black26), // цвет в режиме чтения
                       )
                     : const OutlineInputBorder(
                         borderSide: BorderSide(
@@ -50,14 +52,16 @@ class IngredientRow extends StatelessWidget {
               hintText: 'введите количество',
               labelText: 'Количество',
               border: const OutlineInputBorder(),
-              enabledBorder: const OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.grey), // рамка в обычном состоянии
+              enabledBorder: OutlineInputBorder(
+                borderSide: isReadOnly
+                    ? const BorderSide(color: Colors.black26)
+                    : const BorderSide(
+                        color: Colors.black54), // рамка в обычном состоянии
               ),
               focusedBorder: isReadOnly
                   ? const OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: Colors.grey), // цвет в режиме чтения
+                          color: Colors.black26), // цвет в режиме чтения
                     )
                   : const OutlineInputBorder(
                       borderSide: BorderSide(
@@ -76,14 +80,16 @@ class IngredientRow extends StatelessWidget {
               hintText: 'введите ед.изм.',
               labelText: 'Единица изменрения',
               border: const OutlineInputBorder(),
-              enabledBorder: const OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.grey), // рамка в обычном состоянии
+              enabledBorder: OutlineInputBorder(
+                borderSide: isReadOnly
+                    ? const BorderSide(color: Colors.black26)
+                    : const BorderSide(
+                        color: Colors.black54), // рамка в обычном состоянии
               ),
               focusedBorder: isReadOnly
                   ? const OutlineInputBorder(
                       borderSide: BorderSide(
-                          color: Colors.grey), // цвет в режиме чтения
+                          color: Colors.black26), // цвет в режиме чтения
                     )
                   : const OutlineInputBorder(
                       borderSide: BorderSide(
