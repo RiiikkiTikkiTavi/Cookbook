@@ -100,18 +100,47 @@ class _RecipeScreenState extends State<RecipeScreen> {
       ingredients.add(Ingredient(name: name, quantity: quantity, unit: unit));
     }
 
-    Recipe recipe = Recipe(
-        id: '', title: title, descr: description, ingredient: ingredients);
-
     if (widget.recipeId == null) {
+      Recipe recipe = Recipe(
+          id: '', title: title, descr: description, ingredient: ingredients);
+
       _recipeBloc.add(AddRecipe(recipe: recipe));
     } else {
+      Recipe recipe = Recipe(
+          id: widget.recipeId!,
+          title: title,
+          descr: description,
+          ingredient: ingredients);
+
       _recipeBloc.add(UpdateRecipe(recipe: recipe));
     }
   }
 
   void deleteRecipe() {
     _recipeBloc.add(DeleteRecipe(id: widget.recipeId!));
+  }
+
+  Future<void> confirmDelete() async {
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Удалить рецепт?'),
+        content: const Text('Вы уверены, что хотите удалить этот рецепт?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Удалить'),
+          ),
+        ],
+      ),
+    );
+    if (shouldDelete ?? false) {
+      deleteRecipe();
+    }
   }
 
   void switchEditMode() {
@@ -138,7 +167,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       switchEditMode();
                       break;
                     case RecipeMenuOptions.delete:
-                      deleteRecipe();
+                      confirmDelete();
                       break;
                   }
                 },
