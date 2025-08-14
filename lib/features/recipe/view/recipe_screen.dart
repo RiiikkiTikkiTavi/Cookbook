@@ -1,12 +1,15 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
-import 'package:cookbook/features/bloc/recipe_bloc.dart';
-import 'package:cookbook/features/recipe/widgets/widgets.dart';
-import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
-import 'package:cookbook/resources/resources.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:cookbook/features/bloc/recipe_bloc.dart';
+import 'package:cookbook/features/recipe/widgets/widgets.dart';
+import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
+import 'package:cookbook/resources/resources.dart';
 
 class RecipeScreen extends StatefulWidget {
   final String? recipeId;
@@ -128,11 +131,13 @@ class _RecipeScreenState extends State<RecipeScreen> {
         content: const Text('Вы уверены, что хотите удалить этот рецепт?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () =>
+                Navigator.of(context).pop(false), // закрытие окошка
             child: const Text('Отмена'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () => Navigator.of(context)
+                .pop(true), // закрытие диалога с подтверждением
             child: const Text('Удалить'),
           ),
         ],
@@ -211,17 +216,22 @@ class _RecipeScreenState extends State<RecipeScreen> {
             return ListView(
               padding: const EdgeInsets.all(8),
               children: [
-                _builtImagePicker(),
+                ImagePickerWidget(
+                  onTap: _selectImage,
+                  imageFile: imageFile,
+                ),
                 const SizedBox(height: 24),
-                _builtSectionTitle('Название'),
+                const SectionTitle(
+                  text: 'Название',
+                ),
                 const SizedBox(height: 16),
-                _buildTextField(
+                TextFieldWidget(
                     controller: _titleController,
                     hint: 'Введите название рецепта...',
                     readOnly: isReadOnly),
                 Row(
                   children: [
-                    _builtSectionTitle('Ингредиенты'),
+                    const SectionTitle(text: 'Ингредиенты'),
                     IconButton(
                       iconSize: 20,
                       icon: const Icon(Icons.add),
@@ -256,9 +266,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                _builtSectionTitle('Описание'),
+                const SectionTitle(text: 'Описание'),
                 const SizedBox(height: 16),
-                _buildTextField(
+                TextFieldWidget(
                     controller: _descrController,
                     hint: 'Введите описание рецепта...',
                     maxLines: 8,
@@ -285,36 +295,23 @@ class _RecipeScreenState extends State<RecipeScreen> {
       addIngrController(ingredient: ingr);
     }
   }
+}
 
-  Widget _builtImagePicker() {
-    return GestureDetector(
-      onTap: _selectImage,
-      child: SizedBox(
-        width: 300,
-        height: 300,
-        child: imageFile != null
-            ? Image.file(imageFile!, fit: BoxFit.cover)
-            : const Image(
-                image: AssetImage(AppImages.placeholder),
-                fit: BoxFit.cover,
-              ),
-      ),
-    );
-  }
+class TextFieldWidget extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final int maxLines;
+  final bool readOnly;
+  const TextFieldWidget({
+    super.key,
+    required this.controller,
+    required this.hint,
+    this.maxLines = 1,
+    this.readOnly = false,
+  });
 
-  Widget _builtSectionTitle(String text) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    int maxLines = 1,
-    bool readOnly = false,
-  }) {
+  @override
+  Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
@@ -336,6 +333,49 @@ class _RecipeScreenState extends State<RecipeScreen> {
             : const OutlineInputBorder(
                 borderSide: BorderSide(
                     color: Colors.green), //цвет в режиме редактирования
+              ),
+      ),
+    );
+  }
+}
+
+class SectionTitle extends StatelessWidget {
+  const SectionTitle({
+    super.key,
+    required this.text,
+  });
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+class ImagePickerWidget extends StatelessWidget {
+  const ImagePickerWidget({
+    super.key,
+    required this.onTap,
+    this.imageFile,
+  });
+  final VoidCallback onTap;
+  final File? imageFile;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap, //_selectImage,
+      child: SizedBox(
+        width: 300,
+        height: 300,
+        child: imageFile != null
+            ? Image.file(imageFile!, fit: BoxFit.cover)
+            : const Image(
+                image: AssetImage(AppImages.placeholder),
+                fit: BoxFit.cover,
               ),
       ),
     );
