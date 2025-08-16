@@ -1,3 +1,4 @@
+import 'package:cookbook/features/recipe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 class IngredientRow extends StatelessWidget {
@@ -19,83 +20,28 @@ class IngredientRow extends StatelessWidget {
       children: [
         Expanded(
           flex: 2,
-          child: TextFormField(
+          child: TextFieldWidget(
               controller: nameController,
-              readOnly: isReadOnly,
-              decoration: InputDecoration(
-                hintText: 'введите ингредиент',
-                labelText: 'Ингредиент',
-                border: const OutlineInputBorder(),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: isReadOnly
-                      ? const BorderSide(color: Colors.black26)
-                      : const BorderSide(
-                          color: Colors.black54), // рамка в обычном состоянии
-                ), // рамка в обычном состоянии
-                focusedBorder: isReadOnly
-                    ? const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.black26), // цвет в режиме чтения
-                      )
-                    : const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Colors.green), //цвет в режиме редактирования
-                      ),
-              )),
+              hint: 'введите ингредиент',
+              label: 'Ингредиент',
+              readOnly: isReadOnly),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: TextFormField(
+          child: TextFieldWidget(
             controller: quantityController,
+            hint: 'кол-во',
+            label: 'Количество',
             readOnly: isReadOnly,
-            decoration: InputDecoration(
-              hintText: 'введите количество',
-              labelText: 'Количество',
-              border: const OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                borderSide: isReadOnly
-                    ? const BorderSide(color: Colors.black26)
-                    : const BorderSide(
-                        color: Colors.black54), // рамка в обычном состоянии
-              ),
-              focusedBorder: isReadOnly
-                  ? const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.black26), // цвет в режиме чтения
-                    )
-                  : const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.green), //цвет в режиме редактирования
-                    ),
-            ),
-            keyboardType: TextInputType.number,
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: TextFormField(
+          child: TextFieldWidget(
             controller: unitController,
+            hint: 'ед.изм.',
+            label: 'Ед. измерения',
             readOnly: isReadOnly,
-            decoration: InputDecoration(
-              hintText: 'введите ед.изм.',
-              labelText: 'Единица изменрения',
-              border: const OutlineInputBorder(),
-              enabledBorder: OutlineInputBorder(
-                borderSide: isReadOnly
-                    ? const BorderSide(color: Colors.black26)
-                    : const BorderSide(
-                        color: Colors.black54), // рамка в обычном состоянии
-              ),
-              focusedBorder: isReadOnly
-                  ? const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.black26), // цвет в режиме чтения
-                    )
-                  : const OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: Colors.green), //цвет в режиме редактирования
-                    ),
-            ),
           ),
         ),
       ],
