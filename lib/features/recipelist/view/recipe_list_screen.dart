@@ -6,6 +6,7 @@ import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
 import 'package:flutter/material.dart' hide ErrorWidget;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class RecipeListScreen extends StatefulWidget {
   const RecipeListScreen({super.key});
@@ -30,6 +31,18 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cookbook'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => TalkerScreen(talker: GetIt.I<Talker>()),
+                ),
+              );
+            },
+            icon: const Icon(Icons.document_scanner_outlined),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {

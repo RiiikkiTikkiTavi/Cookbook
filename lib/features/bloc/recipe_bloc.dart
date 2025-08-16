@@ -13,7 +13,19 @@ part 'recipe_state.dart';
 class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   RecipeBloc(this.recipeSource) : super(RecipeInitial()) {
     on<LoadAllRecipes>((event, emit) async {
-      await getAll(emit);
+      try {
+        await getAll(emit);
+        event.completer?.complete();
+      } catch (e, st) {
+        emit(RecipeLoadingFailure(exception: e));
+        event.completer?.completeError(e);
+        GetIt.I<Talker>()
+            .handle(e, st); // использование talker для вывода ошибки
+      }
+      //await getAll(emit);
+      finally {
+        GetIt.I<Talker>().debug('LoadAllRecipes ended');
+      }
     });
     on<AddRecipe>((event, emit) async {
       final newId = const Uuid().v4();
@@ -26,6 +38,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         GetIt.I<Talker>().handle(e, st);
       }
       await getAll(emit);
+
+      GetIt.I<Talker>().debug('AddRecipe ended');
     });
     on<UpdateRecipe>((event, emit) async {
       try {
@@ -36,6 +50,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         GetIt.I<Talker>().handle(e, st);
       }
       await getAll(emit);
+      GetIt.I<Talker>().debug('UpdateRecipe ended');
     });
     on<DeleteRecipe>((event, emit) async {
       try {
@@ -46,6 +61,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         GetIt.I<Talker>().handle(e, st);
       }
       await getAll(emit);
+      GetIt.I<Talker>().debug('DeleteRecipe ended');
     });
     on<OpenRecipe>((event, emit) async {
       try {
@@ -54,6 +70,8 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       } on Exception catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
+      } finally {
+        GetIt.I<Talker>().debug('OpenRecipe ended');
       }
     });
   }
@@ -61,16 +79,17 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
   final AbstractRecipeSource recipeSource;
 
   Future<void> getAll(Emitter<RecipeState> emit) async {
-    try {
-      if (state is! RecipeListLoaded) {
-        emit(RecipeLoading());
-      }
-      final recipeList = await recipeSource.getAll();
-      emit(RecipeListLoaded(recipeList: recipeList));
-    } catch (e, st) {
-      emit(RecipeLoadingFailure(exception: e));
-      GetIt.I<Talker>().handle(e, st); // использование talker для вывода ошибки
+//     try {
+    if (state is! RecipeListLoaded) {
+      emit(RecipeLoading());
     }
+    final recipeList = await recipeSource.getAll();
+    emit(RecipeListLoaded(recipeList: recipeList));
+    //   } catch (e, st) {
+    //     emit(RecipeLoadingFailure(exception: e));
+    //     event.completer?.completeError(e);
+    //     GetIt.I<Talker>().handle(e, st); // использование talker для вывода ошибки
+    // }
   }
 
   @override
