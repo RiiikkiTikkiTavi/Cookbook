@@ -17,16 +17,19 @@ class RecipeListScreen extends StatefulWidget {
 
 class _RecipeListScreenState extends State<RecipeListScreen> {
   Recipe? recipe;
-  final _recipeBloc = RecipeBloc(GetIt.I<AbstractRecipeSource>());
 
   @override
   void initState() {
-    _recipeBloc.add(const LoadAllRecipes());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final recipeBloc = context.read<RecipeBloc>();
+      recipeBloc.add(const LoadAllRecipes());
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final recipeBloc = context.read<RecipeBloc>();
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -48,11 +51,11 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         onRefresh: () async {
           final completer =
               Completer(); // сообщает, что асинхронный метод завершился
-          _recipeBloc.add(LoadAllRecipes(completer: completer));
+          recipeBloc.add(LoadAllRecipes(completer: completer));
           return completer.future;
         },
         child: BlocBuilder<RecipeBloc, RecipeState>(
-          bloc: _recipeBloc,
+          bloc: recipeBloc,
           builder: (context, state) {
             if (state is RecipeListLoaded) {
               if (state.recipeList.isEmpty) {
@@ -69,6 +72,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   ),
                 );
               } else {
+                GetIt.I<Talker>().debug('ListView.separated');
                 return ListView.separated(
                     itemCount: state.recipeList.length,
                     separatorBuilder: (context, i) => const Divider(),
@@ -82,7 +86,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               return const ErrorWidget();
             }
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Text('wait'), //CircularProgressIndicator(),
             );
           },
         ),

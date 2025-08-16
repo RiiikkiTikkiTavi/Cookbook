@@ -26,7 +26,8 @@ class TextFieldWidget extends StatelessWidget {
         labelText: label,
         labelStyle: const TextStyle(color: Colors.black54), // обычное состояние
         floatingLabelStyle: TextStyle(
-          color: readOnly ? Colors.black26 : Colors.green, // цвет при фокусе
+          color: Colors
+              .black26, //readOnly ? Colors.black26 : Colors.green, // цвет при фокусе
         ),
         border: const OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(

@@ -16,6 +16,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       try {
         await getAll(emit);
         event.completer?.complete();
+        GetIt.I<Talker>().debug('LoadAllRecipes');
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         event.completer?.completeError(e);
@@ -37,7 +38,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
       }
-      await getAll(emit);
+      //await getAll(emit);
 
       GetIt.I<Talker>().debug('AddRecipe ended');
     });
@@ -49,7 +50,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
       }
-      await getAll(emit);
+      //await getAll(emit);
       GetIt.I<Talker>().debug('UpdateRecipe ended');
     });
     on<DeleteRecipe>((event, emit) async {
@@ -60,7 +61,7 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
       }
-      await getAll(emit);
+      //await getAll(emit);
       GetIt.I<Talker>().debug('DeleteRecipe ended');
     });
     on<OpenRecipe>((event, emit) async {

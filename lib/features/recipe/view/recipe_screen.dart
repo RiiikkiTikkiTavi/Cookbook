@@ -196,7 +196,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
           } else if (state is RecipeActionSuccess) {
             // если рецепт сохранен
             // возвращаемся назад на главный экран
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(true);
           } else if (state is RecipeLoadingFailure) {
             // если ошибка
             ScaffoldMessenger.of(context).showSnackBar(
