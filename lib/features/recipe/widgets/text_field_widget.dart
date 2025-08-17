@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -23,12 +25,11 @@ class TextFieldWidget extends StatelessWidget {
       readOnly: readOnly,
       decoration: InputDecoration(
         hintText: hint,
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.black54), // обычное состояние
-        floatingLabelStyle: TextStyle(
-          color: Colors
-              .black26, //readOnly ? Colors.black26 : Colors.green, // цвет при фокусе
-        ),
+        // labelText: label,
+        // labelStyle: const TextStyle(color: Colors.black54), // обычное состояние
+        // floatingLabelStyle: TextStyle(
+        //   color: readOnly ? Colors.black26 : Colors.green, // цвет при фокусе
+        // ),
         border: const OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
           borderSide: readOnly

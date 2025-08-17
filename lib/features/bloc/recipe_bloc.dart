@@ -16,7 +16,6 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       try {
         await getAll(emit);
         event.completer?.complete();
-        GetIt.I<Talker>().debug('LoadAllRecipes');
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         event.completer?.completeError(e);

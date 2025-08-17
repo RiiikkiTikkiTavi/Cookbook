@@ -22,8 +22,7 @@ class IngredientRow extends StatelessWidget {
           flex: 2,
           child: TextFieldWidget(
               controller: nameController,
-              hint: 'введите ингредиент',
-              label: 'Ингредиент',
+              hint: 'ингредиент',
               readOnly: isReadOnly),
         ),
         const SizedBox(width: 16),
@@ -31,7 +30,6 @@ class IngredientRow extends StatelessWidget {
           child: TextFieldWidget(
             controller: quantityController,
             hint: 'кол-во',
-            label: 'Количество',
             readOnly: isReadOnly,
           ),
         ),
@@ -40,7 +38,6 @@ class IngredientRow extends StatelessWidget {
           child: TextFieldWidget(
             controller: unitController,
             hint: 'ед.изм.',
-            label: 'Ед. измерения',
             readOnly: isReadOnly,
           ),
         ),

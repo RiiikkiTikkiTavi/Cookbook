@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 final lightTheme = ThemeData(
   useMaterial3: false,
   primarySwatch: Colors.green,
-  scaffoldBackgroundColor: Colors.white54,
+  //scaffoldBackgroundColor: Colors.white54,
   dividerColor: Colors.black26,
   listTileTheme: const ListTileThemeData(iconColor: Colors.amber),
   appBarTheme: const AppBarTheme(

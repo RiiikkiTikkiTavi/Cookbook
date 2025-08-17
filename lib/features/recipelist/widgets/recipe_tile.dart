@@ -29,11 +29,11 @@ class RecipeTile extends StatelessWidget {
             "30 мин",
             style: theme.textTheme.labelSmall,
           ),
-          trailing: SvgPicture.asset(
+          /* trailing: SvgPicture.asset(
             AppImages.cook,
             height: 25,
             width: 25,
-          ),
+          ),*/
           onTap: () async {
             final shouldRefresh = await Navigator.of(context).pushNamed(
               '/recipe',

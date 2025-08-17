@@ -72,7 +72,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   ),
                 );
               } else {
-                GetIt.I<Talker>().debug('ListView.separated');
                 return ListView.separated(
                     itemCount: state.recipeList.length,
                     separatorBuilder: (context, i) => const Divider(),
@@ -86,7 +85,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               return const ErrorWidget();
             }
             return const Center(
-              child: Text('wait'), //CircularProgressIndicator(),
+              child: CircularProgressIndicator(),
             );
           },
         ),
