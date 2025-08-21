@@ -25,6 +25,10 @@ class Ingredient extends Equatable {
     );
   }
 
+  bool isFilled() {
+    return name.trim().isNotEmpty && quantity > 0 && unit.trim().isNotEmpty;
+  }
+
   @override
   List<Object?> get props => [name, quantity, unit];
 }

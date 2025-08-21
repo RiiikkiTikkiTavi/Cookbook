@@ -31,8 +31,12 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       final newId = const Uuid().v4();
       try {
         final recipeWithId = event.recipe.copyWith(id: newId);
-        await recipeSource.save(recipeWithId);
-        emit(RecipeActionSuccess());
+        if (recipeIsValid(recipeWithId)) {
+          await recipeSource.save(recipeWithId);
+          emit(RecipeActionSuccess());
+        } else {
+          throw Exception("Некорректно заполнен рецепт");
+        }
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -43,8 +47,12 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
     });
     on<UpdateRecipe>((event, emit) async {
       try {
-        await recipeSource.save(event.recipe);
-        emit(RecipeActionSuccess());
+        if (recipeIsValid(event.recipe)) {
+          await recipeSource.save(event.recipe);
+          emit(RecipeActionSuccess());
+        } else {
+          throw Exception("Некорректно заполнен рецепт");
+        }
       } catch (e, st) {
         emit(RecipeLoadingFailure(exception: e));
         GetIt.I<Talker>().handle(e, st);
@@ -75,21 +83,22 @@ class RecipeBloc extends Bloc<RecipeEvent, RecipeState> {
       }
     });
   }
+
+  bool recipeIsValid(Recipe recipe) {
+    final allIngredientsValid =
+        recipe.ingredient.every((ingr) => ingr.isFilled());
+    return recipe.title.trim().isNotEmpty && allIngredientsValid;
+  }
+
   //final recipeSource = GetIt.I<AbstractRecipeSource>();
   final AbstractRecipeSource recipeSource;
 
   Future<void> getAll(Emitter<RecipeState> emit) async {
-//     try {
     if (state is! RecipeListLoaded) {
       emit(RecipeLoading());
     }
     final recipeList = await recipeSource.getAll();
     emit(RecipeListLoaded(recipeList: recipeList));
-    //   } catch (e, st) {
-    //     emit(RecipeLoadingFailure(exception: e));
-    //     event.completer?.completeError(e);
-    //     GetIt.I<Talker>().handle(e, st); // использование talker для вывода ошибки
-    // }
   }
 
   @override
