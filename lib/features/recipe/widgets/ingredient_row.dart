@@ -74,7 +74,7 @@ class IngredientRow extends StatelessWidget {
               if (value == null || value.trim().isEmpty) {
                 return "Обязательно";
               }
-              if (!RegExp(r"^[a-zA-Zа-яА-Я]+$").hasMatch(value)) {
+              if (!RegExp(r'^[а-яА-Я\.]+$').hasMatch(value)) {
                 return "Некорректно";
               }
               return null;
