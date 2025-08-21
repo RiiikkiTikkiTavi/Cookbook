@@ -6,13 +6,15 @@ class IngredientRow extends StatelessWidget {
   final TextEditingController quantityController;
   final TextEditingController unitController;
   final bool isReadOnly;
+  final Widget? trailing;
 
   const IngredientRow(
       {super.key,
       required this.nameController,
       required this.quantityController,
       required this.unitController,
-      this.isReadOnly = false});
+      this.isReadOnly = false,
+      this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,7 @@ class IngredientRow extends StatelessWidget {
             readOnly: isReadOnly,
           ),
         ),
+        if (trailing != null) trailing!,
       ],
     );
   }

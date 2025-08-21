@@ -256,20 +256,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       hint: 'Введите название рецепта...',
                       readOnly: isReadOnly),
                   const SizedBox(height: 16),
-                  Row(
+                  const Row(
                     children: [
-                      const SectionTitle(text: 'Ингредиенты'),
-                      if (!isReadOnly)
-                        IconButton(
-                          iconSize: 20,
-                          icon: const Icon(Icons.add),
-                          onPressed: () {
-                            // метод добавления нового ингредиента
-                            addIngrController();
-                          },
-                        )
-                      //else
-                      //const SizedBox(height: 16),
+                      SectionTitle(text: 'Ингредиенты'),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -280,7 +269,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       // entries в виде пары ключ (номер п/п) - значение
                       // map((entry) для каждого значения выполняем следующее
                       ..._ingrControllers.asMap().entries.map((entry) {
-                        //final index = entry.key;
+                        final index = entry.key;
                         final contollers = entry.value;
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -290,6 +279,13 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             quantityController: contollers.quantityController,
                             unitController: contollers.unitController,
                             isReadOnly: isReadOnly,
+                            trailing: (!isReadOnly &&
+                                    index == _ingrControllers.length - 1)
+                                ? IconButton(
+                                    icon: const Icon(Icons.add),
+                                    onPressed: addIngrController,
+                                  )
+                                : null,
                           ),
                         );
                       }),
