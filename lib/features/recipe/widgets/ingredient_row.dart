@@ -5,16 +5,23 @@ class IngredientRow extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController quantityController;
   final TextEditingController unitController;
+  final FocusNode nameFocus;
+  final FocusNode quantityFocus;
+  final FocusNode unitFocus;
   final bool isReadOnly;
   final Widget? trailing;
 
-  const IngredientRow(
-      {super.key,
-      required this.nameController,
-      required this.quantityController,
-      required this.unitController,
-      this.isReadOnly = false,
-      this.trailing});
+  const IngredientRow({
+    super.key,
+    required this.nameController,
+    required this.quantityController,
+    required this.unitController,
+    required this.nameFocus,
+    required this.quantityFocus,
+    required this.unitFocus,
+    this.isReadOnly = false,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +40,9 @@ class IngredientRow extends StatelessWidget {
                 }
                 return null;
               },
+              focusNode: nameFocus,
+              onSumnitted: (_) =>
+                  FocusScope.of(context).requestFocus(quantityFocus),
               hint: 'ингредиент',
               readOnly: isReadOnly),
         ),
@@ -50,6 +60,8 @@ class IngredientRow extends StatelessWidget {
               }
               return null;
             },
+            focusNode: quantityFocus,
+            onSumnitted: (_) => FocusScope.of(context).requestFocus(unitFocus),
             hint: 'кол-во',
             readOnly: isReadOnly,
           ),
@@ -67,6 +79,9 @@ class IngredientRow extends StatelessWidget {
               }
               return null;
             },
+            focusNode: unitFocus,
+            textInputAction: TextInputAction.done,
+            onSumnitted: (_) => FocusScope.of(context).unfocus(),
             hint: 'ед.изм.',
             readOnly: isReadOnly,
           ),

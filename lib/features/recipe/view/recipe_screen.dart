@@ -35,6 +35,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
   final List<IngredientControllers> _ingrControllers = [];
   // ошибка при отсутсвии ингредиентов
   String ingredientListError = '';
+  // для автомат перевода курсора
+  final titleFocus = FocusNode();
+  final descrFocus = FocusNode();
 
 // при инициализации страницы
 // если открывается сущ. рецепт - загружаются данные
@@ -55,6 +58,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
   void dispose() {
     _titleController.dispose();
     _descrController.dispose();
+    titleFocus.dispose();
+    descrFocus.dispose();
     for (var ingr in _ingrControllers) {
       ingr.dispose();
     }
@@ -63,27 +68,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
 // метод добавления новых контроллеров ингредиентов
   void addIngrController({Ingredient? ingredient}) {
-    if (_ingrControllers.isNotEmpty) {
-      final last = _ingrControllers.last;
-      if (!last.isFilled()) {
-        setState(() {
-          ingredientListError = "Сначала заполните предыдущий ингредиент";
-        });
-        return;
-      }
-    }
-
+    final newControllers = IngredientControllers(
+      nameController: TextEditingController(text: ingredient?.name ?? ''),
+      quantityController: TextEditingController(
+          text: ingredient?.quantity != null && ingredient!.quantity != 0
+              ? ingredient.quantity.toString()
+              : ''),
+      unitController: TextEditingController(text: ingredient?.unit ?? ''),
+    );
     setState(() {
-      _ingrControllers.add(
-        IngredientControllers(
-          nameController: TextEditingController(text: ingredient?.name ?? ''),
-          quantityController: TextEditingController(
-              text: ingredient?.quantity != null && ingredient!.quantity != 0
-                  ? ingredient.quantity.toString()
-                  : ''),
-          unitController: TextEditingController(text: ingredient?.unit ?? ''),
-        ),
-      );
+      _ingrControllers.add(newControllers);
       ingredientListError = '';
     });
   }
@@ -264,6 +258,17 @@ class _RecipeScreenState extends State<RecipeScreen> {
                         }
                         return null;
                       },
+                      focusNode: titleFocus,
+                      textInputAction: TextInputAction.next,
+                      onSumnitted: (_) {
+                        if (_ingrControllers.isNotEmpty) {
+                          FocusScope.of(context)
+                              .requestFocus(_ingrControllers.first.nameFocus);
+                        }
+                        // else {
+                        //   FocusScope.of(context).requestFocus(descrFocus);
+                        // }
+                      },
                       hint: 'Введите название рецепта...',
                       readOnly: isReadOnly),
                   const SizedBox(height: 16),
@@ -289,12 +294,30 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             nameController: contollers.nameController,
                             quantityController: contollers.quantityController,
                             unitController: contollers.unitController,
+                            nameFocus: contollers.nameFocus,
+                            quantityFocus: contollers.quantityFocus,
+                            unitFocus: contollers.unitFocus,
                             isReadOnly: isReadOnly,
                             trailing: (!isReadOnly &&
                                     index == _ingrControllers.length - 1)
                                 ? IconButton(
                                     icon: const Icon(Icons.add),
-                                    onPressed: addIngrController,
+                                    onPressed: () {
+                                      final last = _ingrControllers.last;
+                                      if (last.isFilled()) {
+                                        addIngrController();
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(
+                                              _ingrControllers.last.nameFocus);
+                                        });
+                                      } else {
+                                        setState(() {
+                                          ingredientListError =
+                                              "Сначала заполните предыдущий ингредиент";
+                                        });
+                                      }
+                                    },
                                   )
                                 : null,
                           ),
@@ -324,7 +347,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           if (_ingrControllers.isEmpty ||
-                              !_ingrControllers.first.isFilled()) {
+                              !_ingrControllers.first.isFilled() ||
+                              _ingrControllers.last.isFilled()) {
                             setState(() {
                               ingredientListError =
                                   "Добавьте хотя бы один ингредиент";
@@ -403,16 +427,26 @@ class IngredientControllers {
   final TextEditingController quantityController;
   final TextEditingController unitController;
 
+  final FocusNode nameFocus;
+  final FocusNode quantityFocus;
+  final FocusNode unitFocus;
+
   IngredientControllers({
     required this.nameController,
     required this.quantityController,
     required this.unitController,
-  });
+  })  : nameFocus =
+            FocusNode(), // назначение значений final до выполнения тела конструктора
+        quantityFocus = FocusNode(),
+        unitFocus = FocusNode();
 
   void dispose() {
     nameController.dispose();
     quantityController.dispose();
     unitController.dispose();
+    nameFocus.dispose();
+    quantityFocus.dispose();
+    unitFocus.dispose();
   }
 
   bool isFilled() {

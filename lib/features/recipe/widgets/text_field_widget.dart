@@ -8,6 +8,9 @@ class TextFieldWidget extends StatelessWidget {
   final bool readOnly;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
+  final TextInputAction textInputAction;
+  final ValueChanged<String>? onSumnitted;
   const TextFieldWidget({
     super.key,
     required this.controller,
@@ -17,6 +20,9 @@ class TextFieldWidget extends StatelessWidget {
     this.maxLines = 1,
     this.readOnly = false,
     this.keyboardType,
+    this.focusNode,
+    this.textInputAction = TextInputAction.next,
+    this.onSumnitted,
   });
 
   @override
@@ -24,9 +30,12 @@ class TextFieldWidget extends StatelessWidget {
     return TextFormField(
       controller: controller,
       validator: validator,
+      focusNode: focusNode,
       maxLines: maxLines,
       readOnly: readOnly,
       keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onSumnitted,
       decoration: InputDecoration(
         hintText: hint,
         // labelText: label,
@@ -34,6 +43,7 @@ class TextFieldWidget extends StatelessWidget {
         // floatingLabelStyle: TextStyle(
         //   color: readOnly ? Colors.black26 : Colors.green, // цвет при фокусе
         // ),
+
         border: const OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
           borderSide: readOnly
