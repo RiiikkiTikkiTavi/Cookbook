@@ -63,6 +63,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
 // метод добавления новых контроллеров ингредиентов
   void addIngrController({Ingredient? ingredient}) {
+    if (_ingrControllers.isNotEmpty) {
+      final last = _ingrControllers.last;
+      if (!last.isFilled()) {
+        setState(() {
+          ingredientListError = "Сначала заполните предыдущий ингредиент";
+        });
+        return;
+      }
+    }
+
     setState(() {
       _ingrControllers.add(
         IngredientControllers(
@@ -74,6 +84,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
           unitController: TextEditingController(text: ingredient?.unit ?? ''),
         ),
       );
+      ingredientListError = '';
     });
   }
 
