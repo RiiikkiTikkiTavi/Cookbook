@@ -104,6 +104,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
     final title = _titleController.text.trim();
     final description = _descrController.text.trim();
 
+    _ingrControllers.removeWhere((c) => !c.isFilled());
     final ingredients = <Ingredient>[];
     for (final ingr in _ingrControllers) {
       final name = ingr.nameController.text.trim();
@@ -345,10 +346,13 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   if (!isReadOnly)
                     ElevatedButton(
                       onPressed: () {
+                        setState(() {
+                          _ingrControllers.removeWhere((c) => !c.isFilled());
+                        });
+
                         if (_formKey.currentState!.validate()) {
                           if (_ingrControllers.isEmpty ||
-                              !_ingrControllers.first.isFilled() ||
-                              _ingrControllers.last.isFilled()) {
+                              !_ingrControllers.first.isFilled()) {
                             setState(() {
                               ingredientListError =
                                   "Добавьте хотя бы один ингредиент";
