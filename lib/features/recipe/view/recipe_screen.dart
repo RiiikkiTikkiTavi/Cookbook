@@ -33,8 +33,12 @@ class _RecipeScreenState extends State<RecipeScreen> {
   final _descrController = TextEditingController();
   // список контроллеров для ингредиентов
   final List<IngredientControllers> _ingrControllers = [];
+  // ошибка при отсутсвии ингредиентов
+  String ingredientListError = '';
 
-// при инициализации страницы сразу добавляется первый контроллер
+// при инициализации страницы
+// если открывается сущ. рецепт - загружаются данные
+// если новый - сразу добавляется первый контроллер
 // для первой строки ингредиентов
   @override
   void initState() {
@@ -273,7 +277,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       // entries в виде пары ключ (номер п/п) - значение
                       // map((entry) для каждого значения выполняем следующее
                       ..._ingrControllers.asMap().entries.map((entry) {
-                        final index = entry.key;
+                        //final index = entry.key;
                         final contollers = entry.value;
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -286,6 +290,14 @@ class _RecipeScreenState extends State<RecipeScreen> {
                           ),
                         );
                       }),
+                      Text(
+                        ingredientListError,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                          fontSize: 12,
+                          height: 1.5,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -301,7 +313,18 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          saveRecipe();
+                          if (_ingrControllers.isEmpty ||
+                              !_ingrControllers.first.isFilled()) {
+                            setState(() {
+                              ingredientListError =
+                                  "Добавьте хотя бы один ингредиент";
+                            });
+                          } else {
+                            setState(() {
+                              ingredientListError = "";
+                            });
+                            saveRecipe();
+                          }
                         }
                       },
                       child: const Text('Сохранить'),
@@ -380,5 +403,11 @@ class IngredientControllers {
     nameController.dispose();
     quantityController.dispose();
     unitController.dispose();
+  }
+
+  bool isFilled() {
+    return nameController.text.trim().isNotEmpty &&
+        quantityController.text.trim().isNotEmpty &&
+        unitController.text.trim().isNotEmpty;
   }
 }
