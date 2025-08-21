@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:talker_flutter/talker_flutter.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -8,9 +6,11 @@ class TextFieldWidget extends StatelessWidget {
   final String label;
   final int maxLines;
   final bool readOnly;
+  final String? Function(String?)? validator;
   const TextFieldWidget({
     super.key,
     required this.controller,
+    this.validator,
     required this.hint,
     this.label = '',
     this.maxLines = 1,
@@ -19,8 +19,9 @@ class TextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
+      validator: validator,
       maxLines: maxLines,
       readOnly: readOnly,
       decoration: InputDecoration(

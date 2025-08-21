@@ -25,6 +25,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   File? imageFile;
   final ImagePicker picker = ImagePicker();
   late bool isReadOnly;
+  final _formKey = GlobalKey<FormState>();
 
   // контроллер для текстового поля - название
   final _titleController = TextEditingController();
@@ -154,6 +155,15 @@ class _RecipeScreenState extends State<RecipeScreen> {
     });
   }
 
+  void _fillFields(Recipe recipe) {
+    _titleController.text = recipe.title;
+    _descrController.text = recipe.descr;
+    //_ingrControllers.clear();
+    for (var ingr in recipe.ingredient) {
+      addIngrController(ingredient: ingr);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,95 +215,104 @@ class _RecipeScreenState extends State<RecipeScreen> {
             );
           }
         },
-        child: BlocBuilder<RecipeBloc, RecipeState>(
-          bloc: _recipeBloc,
-          builder: (context, state) {
-            if (state is RecipeLoading) {
-              return const Center(
-                child: Text('Wait'), //CircularProgressIndicator(),
-              );
-            }
-            return ListView(
-              padding: const EdgeInsets.all(8),
-              children: [
-                // ImagePickerWidget(
-                //   onTap: _selectImage,
-                //   imageFile: imageFile,
-                // ),
-                const SizedBox(height: 24),
-                const SectionTitle(
-                  text: 'Название',
-                ),
-                const SizedBox(height: 16),
-                TextFieldWidget(
-                    controller: _titleController,
-                    hint: 'Введите название рецепта...',
-                    readOnly: isReadOnly),
-                Row(
-                  children: [
-                    const SectionTitle(text: 'Ингредиенты'),
-                    IconButton(
-                      iconSize: 20,
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        // метод добавления нового ингредиента
-                        addIngrController();
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Column(
-                  children: [
-                    //..._ingrControllers перечисление всех ингредиентов
-                    // asMap() преобразованных в мапу
-                    // entries в виде пары ключ (номер п/п) - значение
-                    // map((entry) для каждого значения выполняем следующее
-                    ..._ingrControllers.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final contollers = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        // виджет строки ингредиента
-                        child: IngredientRow(
-                          nameController: contollers.nameController,
-                          quantityController: contollers.quantityController,
-                          unitController: contollers.unitController,
-                          isReadOnly: isReadOnly,
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                const SectionTitle(text: 'Описание'),
-                const SizedBox(height: 16),
-                TextFieldWidget(
-                    controller: _descrController,
-                    hint: 'Введите описание рецепта...',
-                    maxLines: 8,
-                    readOnly: isReadOnly),
-                const SizedBox(height: 16),
-                if (!isReadOnly)
-                  ElevatedButton(
-                    onPressed: saveRecipe,
-                    child: const Text('Сохранить'),
+        child: Form(
+          key: _formKey,
+          child: BlocBuilder<RecipeBloc, RecipeState>(
+            bloc: _recipeBloc,
+            builder: (context, state) {
+              if (state is RecipeLoading) {
+                return const Center(
+                  child: Text('Wait'), //CircularProgressIndicator(),
+                );
+              }
+              return ListView(
+                padding: const EdgeInsets.all(8),
+                children: [
+                  // ImagePickerWidget(
+                  //   onTap: _selectImage,
+                  //   imageFile: imageFile,
+                  // ),
+                  // const SizedBox(height: 24),
+                  const SectionTitle(
+                    text: 'Название',
                   ),
-              ],
-            );
-          },
+                  const SizedBox(height: 16),
+                  TextFieldWidget(
+                      controller: _titleController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Название должно быть заполнено";
+                        }
+                        if (!RegExp(r"^[a-zA-Zа-яА-Я0-9\s\-]+$")
+                            .hasMatch(value)) {
+                          return "Название заполнено некорректно";
+                        }
+                        return null;
+                      },
+                      hint: 'Введите название рецепта...',
+                      readOnly: isReadOnly),
+
+                  Row(
+                    children: [
+                      const SectionTitle(text: 'Ингредиенты'),
+                      IconButton(
+                        iconSize: 20,
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          // метод добавления нового ингредиента
+                          addIngrController();
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Column(
+                    children: [
+                      //..._ingrControllers перечисление всех ингредиентов
+                      // asMap() преобразованных в мапу
+                      // entries в виде пары ключ (номер п/п) - значение
+                      // map((entry) для каждого значения выполняем следующее
+                      ..._ingrControllers.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final contollers = entry.value;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          // виджет строки ингредиента
+                          child: IngredientRow(
+                            nameController: contollers.nameController,
+                            quantityController: contollers.quantityController,
+                            unitController: contollers.unitController,
+                            isReadOnly: isReadOnly,
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  const SectionTitle(text: 'Описание'),
+                  const SizedBox(height: 16),
+                  TextFieldWidget(
+                      controller: _descrController,
+                      hint: 'Введите описание рецепта...',
+                      maxLines: 8,
+                      readOnly: isReadOnly),
+                  const SizedBox(height: 16),
+                  if (!isReadOnly)
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          saveRecipe();
+                        }
+                      },
+                      child: const Text('Сохранить'),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
-  }
-
-  void _fillFields(Recipe recipe) {
-    _titleController.text = recipe.title;
-    _descrController.text = recipe.descr;
-    //_ingrControllers.clear();
-    for (var ingr in recipe.ingredient) {
-      addIngrController(ingredient: ingr);
-    }
   }
 }
 

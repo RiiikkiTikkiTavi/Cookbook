@@ -1,9 +1,7 @@
 import 'package:cookbook/features/bloc/recipe_bloc.dart';
 import 'package:cookbook/repositories/recipe_repository/recipe_repository.dart';
-import 'package:cookbook/resources/resources.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class RecipeTile extends StatelessWidget {
   const RecipeTile({
