@@ -255,18 +255,21 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       },
                       hint: 'Введите название рецепта...',
                       readOnly: isReadOnly),
-
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       const SectionTitle(text: 'Ингредиенты'),
-                      IconButton(
-                        iconSize: 20,
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          // метод добавления нового ингредиента
-                          addIngrController();
-                        },
-                      ),
+                      if (!isReadOnly)
+                        IconButton(
+                          iconSize: 20,
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            // метод добавления нового ингредиента
+                            addIngrController();
+                          },
+                        )
+                      //else
+                      //const SizedBox(height: 16),
                     ],
                   ),
                   const SizedBox(height: 16),
