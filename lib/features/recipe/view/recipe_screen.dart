@@ -257,7 +257,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
             builder: (context, state) {
               if (state is RecipeLoading) {
                 return const Center(
-                  child: Text('Wait'), //CircularProgressIndicator(),
+                  child: CircularProgressIndicator(),
                 );
               }
               const sizedBox = SizedBox(height: 16);
@@ -273,6 +273,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     text: 'Название',
                   ),
                   sizedBox,
+                  // секция названия
                   TextFieldWidget(
                       controller: _titleController,
                       validator: (value) {
@@ -296,6 +297,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       hint: 'Введите название рецепта...',
                       readOnly: isReadOnly),
                   sizedBox,
+                  // секция ингредиентов
                   const Row(
                     children: [
                       SectionTitle(text: 'Ингредиенты'),
@@ -358,6 +360,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     ],
                   ),
                   sizedBox,
+                  // секция описания
                   const SectionTitle(text: 'Описание'),
                   sizedBox,
                   TextFieldWidget(
@@ -366,6 +369,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       maxLines: 8,
                       readOnly: isReadOnly),
                   sizedBox,
+                  // кнопка сохранения
                   if (!isReadOnly)
                     ElevatedButton(
                       onPressed: validateRecipe,

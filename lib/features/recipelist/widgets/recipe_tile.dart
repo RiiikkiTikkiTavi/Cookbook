@@ -23,10 +23,10 @@ class RecipeTile extends StatelessWidget {
             recipe.title,
             style: theme.textTheme.bodyMedium,
           ),
-          subtitle: Text(
-            "30 мин",
-            style: theme.textTheme.labelSmall,
-          ),
+          // subtitle: Text(
+          //   "30 мин",
+          //   style: theme.textTheme.labelSmall,
+          // ),
           /* trailing: SvgPicture.asset(
             AppImages.cook,
             height: 25,
