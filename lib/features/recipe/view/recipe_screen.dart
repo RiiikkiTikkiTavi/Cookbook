@@ -365,7 +365,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   sizedBox,
                   TextFieldWidget(
                       controller: _descrController,
-                      hint: 'Введите описание рецепта...',
+                      hint: isReadOnly ? null : 'Введите описание рецепта...',
                       maxLines: 8,
                       readOnly: isReadOnly),
                   sizedBox,

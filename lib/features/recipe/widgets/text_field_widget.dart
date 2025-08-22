@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
-  final String hint;
+  final String? hint;
   final String label;
   final int maxLines;
   final bool readOnly;
