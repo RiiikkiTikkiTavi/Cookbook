@@ -1,16 +1,53 @@
-# cookbook
+# CookBook - Кулинарная книга
 
-A new Flutter project.
+Приложение на Flutter для ведения собственной базы рецептов.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Описание
 
-A few resources to get you started if this is your first Flutter project:
+CookBook — это мобильное приложение, позволяющее проводить полноценную работу с рецептами, т.е. создавать новые, редактировать и удалять существующие.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Статус: MVP (версия 1.0). В проекте реализованы базовые функции работы с рецептами. Планируется расширение функциональности.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+---
+
+## Функциональность v.1.0
+
+- Создание рецепта: названия, состава с указанием количества и описания
+- Отображение страницы рецепта без возможности редактирования (когда готовишь на кухне, не хочется случайно что-то поменять)
+- Редактирование рецепта
+- Удаление рецепта
+- Просмотр общего списка рецептов
+
+---
+
+## Технологии
+- get_it
+- flutter_bloc
+- equatable
+- talker_flutter
+- talker_dio_logger
+- talker_bloc_logger
+- hive_flutter
+- hive_generator
+
+---
+
+## Что было реализовано
+- созданы модели данных рецепта и ингредиентов, организовано их хранение в Hive
+- использован механизм логгирования с помощью talker
+- использовано внедрение зависимостей через get_it
+- выделены основные события и состояния для архитектуры bloc
+- реализована логика управления состоянием с помощью bloc
+- сделана обработка некорректного ввода как на уровне UI, так и на уровне bloc
+
+---
+
+## Планируемая функциональность
+- Добавление тегов на рецепты (основное блюдо, гарнир, десерт и т.д.)
+- Фильтрация по тегам на основной странице со списком рецептов
+- Поиск рецептов
+- Расчет пищевой ценности блюда на основе рецепта (API https://api.edamam.com/api/nutrition-details)
+- Автоматический пересчет блюда на большие или меньшие порции в режиме просмотра (чтобы не изменить оригинал)
