@@ -92,8 +92,14 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context).pushNamed('/recipe');
+        onPressed: () async {
+          //Navigator.of(context).pushNamed('/recipe');
+          final shouldRefresh = await Navigator.of(context).pushNamed(
+            '/recipe',
+          );
+          if (shouldRefresh == true) {
+            recipeBloc.add(const LoadAllRecipes());
+          }
           //ProductNutritionRepository().getNutrition(['1 egg', '100ml milk']);
         },
       ),
