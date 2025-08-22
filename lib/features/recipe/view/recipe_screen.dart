@@ -100,11 +100,35 @@ class _RecipeScreenState extends State<RecipeScreen> {
     }
   }
 
+  void validateRecipe() {
+    if (_ingrControllers.first.isFilled()) {
+      setState(() {
+        _ingrControllers.removeWhere((c) => !c.isFilled());
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_formKey.currentState!.validate()) {
+          saveRecipe();
+        }
+      });
+    } else {
+      if (_titleController.text.trim().isEmpty) {
+        setState(() {
+          ingredientListError =
+              "Заполните название и добавьте хотя бы один ингредиент";
+        });
+      } else {
+        setState(() {
+          ingredientListError = "Добавьте хотя бы один ингредиент";
+        });
+      }
+    }
+  }
+
   void saveRecipe() {
     final title = _titleController.text.trim();
     final description = _descrController.text.trim();
 
-    _ingrControllers.removeWhere((c) => !c.isFilled());
     final ingredients = <Ingredient>[];
     for (final ingr in _ingrControllers) {
       final name = ingr.nameController.text.trim();
@@ -227,6 +251,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
         },
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: BlocBuilder<RecipeBloc, RecipeState>(
             bloc: _recipeBloc,
             builder: (context, state) {
@@ -235,6 +260,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   child: Text('Wait'), //CircularProgressIndicator(),
                 );
               }
+              const sizedBox = SizedBox(height: 16);
               return ListView(
                 padding: const EdgeInsets.all(8),
                 children: [
@@ -246,7 +272,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                   const SectionTitle(
                     text: 'Название',
                   ),
-                  const SizedBox(height: 16),
+                  sizedBox,
                   TextFieldWidget(
                       controller: _titleController,
                       validator: (value) {
@@ -266,19 +292,16 @@ class _RecipeScreenState extends State<RecipeScreen> {
                           FocusScope.of(context)
                               .requestFocus(_ingrControllers.first.nameFocus);
                         }
-                        // else {
-                        //   FocusScope.of(context).requestFocus(descrFocus);
-                        // }
                       },
                       hint: 'Введите название рецепта...',
                       readOnly: isReadOnly),
-                  const SizedBox(height: 16),
+                  sizedBox,
                   const Row(
                     children: [
                       SectionTitle(text: 'Ингредиенты'),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  sizedBox,
                   Column(
                     children: [
                       //..._ingrControllers перечисление всех ингредиентов
@@ -334,37 +357,18 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  sizedBox,
                   const SectionTitle(text: 'Описание'),
-                  const SizedBox(height: 16),
+                  sizedBox,
                   TextFieldWidget(
                       controller: _descrController,
                       hint: 'Введите описание рецепта...',
                       maxLines: 8,
                       readOnly: isReadOnly),
-                  const SizedBox(height: 16),
+                  sizedBox,
                   if (!isReadOnly)
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _ingrControllers.removeWhere((c) => !c.isFilled());
-                        });
-
-                        if (_formKey.currentState!.validate()) {
-                          if (_ingrControllers.isEmpty ||
-                              !_ingrControllers.first.isFilled()) {
-                            setState(() {
-                              ingredientListError =
-                                  "Добавьте хотя бы один ингредиент";
-                            });
-                          } else {
-                            setState(() {
-                              ingredientListError = "";
-                            });
-                            saveRecipe();
-                          }
-                        }
-                      },
+                      onPressed: validateRecipe,
                       child: const Text('Сохранить'),
                     ),
                 ],
