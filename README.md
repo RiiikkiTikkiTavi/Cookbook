@@ -28,14 +28,11 @@ CookBook — это мобильное приложение, позволяющ�
 ---
 
 ## Технологии
-- get_it
-- flutter_bloc
-- equatable
-- talker_flutter
-- talker_dio_logger
-- talker_bloc_logger
-- hive_flutter
-- hive_generator
+- **Flutter, Dart**
+- **State management:** flutter_bloc, equatable
+- **DI (Dependency Injection):** get_it
+- **Логирование:** talker_flutter, talker_dio_logger, talker_bloc_logger
+- **Локальное хранилище:** hive_flutter, hive_generator
 
 ---
 
